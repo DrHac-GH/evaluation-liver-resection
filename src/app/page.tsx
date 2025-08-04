@@ -1,103 +1,96 @@
-import Image from "next/image";
+
+"use client";
+
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [icgR15, setIcgR15] = useState<string>("");
+  const [result, setResult] = useState<{
+    lc: number | string;
+    nonLc: number | string;
+  } | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  useEffect(() => {
+    const a = parseFloat(icgR15);
+    if (icgR15 === '' || isNaN(a)) {
+      setResult(null);
+      return;
+    }
+
+    if (a <= 0 || a >= 100) {
+      setResult({ lc: "有効範囲外", nonLc: "有効範囲外" });
+      return;
+    }
+
+    const ln = Math.log;
+    const denominator = ln(100) - ln(a);
+
+    // Liver Cirrhosis Calculation
+    let resultLc: number | string;
+    if (a >= 40) {
+      resultLc = "切除不適応";
+    } else {
+      const numeratorLc = ln(40) - ln(a);
+      resultLc = (numeratorLc / denominator) * 100;
+    }
+
+    // Normal Liver Calculation
+    let resultNonLc: number | string;
+    if (a >= 50) {
+      resultNonLc = "切除不適応";
+    } else {
+      const numeratorNonLc = ln(50) - ln(a);
+      resultNonLc = (numeratorNonLc / denominator) * 100;
+    }
+
+    setResult({ lc: resultLc, nonLc: resultNonLc });
+  }, [icgR15]);
+
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-slate-50">
+      <Card className="w-full max-w-lg">
+        <CardHeader>
+          <CardTitle>肝切除率シミュレーター</CardTitle>
+          <CardDescription>ICG R15値 (0より大きく100未満) を入力すると、自動で最大許容肝切除率を計算します。</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="icg-r15">ICG R15値 (%)</Label>
+            <Input
+              id="icg-r15"
+              type="number"
+              placeholder="例: 15"
+              value={icgR15}
+              onChange={(e) => setIcgR15(e.target.value)}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col items-stretch">
+          {result && (
+            <div className="mt-4 p-4 bg-slate-100 rounded-md w-full">
+              <h3 className="text-lg font-semibold mb-2">計算結果</h3>
+              <div className="space-y-2">
+                <p><strong>入力ICG R15:</strong> {icgR15}%</p>
+                <div className="p-3 rounded-md border-2 border-blue-500">
+                  <p className="font-bold">肝硬変 (LC) の場合:</p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {typeof result.lc === 'number' ? `${result.lc.toFixed(1)}%` : result.lc}
+                  </p>
+                </div>
+                <div className="p-3 rounded-md border-2 border-green-500 mt-2">
+                  <p className="font-bold">正常肝 (non-LC) の場合:</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {typeof result.nonLc === 'number' ? `${result.nonLc.toFixed(1)}%` : result.nonLc}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardFooter>
+      </Card>
+    </main>
   );
 }
