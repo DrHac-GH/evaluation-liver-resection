@@ -20,6 +20,7 @@ export default function Home() {
   const [makuuchiResult, setMakuuchiResult] = useState<string | null>(null);
   const [childPughResult, setChildPughResult] = useState<{ score: number; class: string; } | null>(null);
 
+
   // --- Unified Calculation Logic ---
   useEffect(() => {
     const icg = parseFloat(icgR15);
@@ -38,7 +39,9 @@ export default function Home() {
       setTakasakiResult(null);
     }
 
+
     // --- Makuuchi Criteria ---
+
     const makuuchiAscitesPresent = ascites === 'mild' || ascites === 'moderate';
     if (!isNaN(icg) && !isNaN(bil)) {
       if (makuuchiAscitesPresent || bil > 2.0) {
@@ -78,6 +81,7 @@ export default function Home() {
       setChildPughResult(null);
     }
 
+
   }, [icgR15, totalBilirubin, albumin, pt, ascites, encephalopathy]);
 
   return (
@@ -94,10 +98,12 @@ export default function Home() {
             <CardTitle>患者情報入力</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
             <div className="grid gap-2"><Label htmlFor="icg-r15">ICG R15値 (%)</Label><Input id="icg-r15" type="number" value={icgR15} onChange={(e) => setIcgR15(e.target.value)} /></div>
             <div className="grid gap-2"><Label htmlFor="bilirubin">総ビリルビン値 (mg/dL)</Label><Input id="bilirubin" type="number" value={totalBilirubin} onChange={(e) => setTotalBilirubin(e.target.value)} /></div>
             <div className="grid gap-2"><Label htmlFor="albumin">血清アルブミン値 (g/dL)</Label><Input id="albumin" type="number" value={albumin} onChange={(e) => setAlbumin(e.target.value)} /></div>
             <div className="grid gap-2"><Label htmlFor="pt">PT活性値 (%)</Label><Input id="pt" type="number" value={pt} onChange={(e) => setPt(e.target.value)} /></div>
+
             <div className="grid gap-2 sm:col-span-2 lg:col-span-3"><Label>腹水</Label><RadioGroup value={ascites} onValueChange={(v) => setAscites(v as "none" | "mild" | "moderate")} className="flex flex-wrap gap-x-4"><div className="flex items-center space-x-2"><RadioGroupItem value="none" id="asc-no" /><Label htmlFor="asc-no">なし</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="mild" id="asc-mild" /><Label htmlFor="asc-mild">軽度</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="moderate" id="asc-mod" /><Label htmlFor="asc-mod">中等度以上</Label></div></RadioGroup></div>
             <div className="grid gap-2 sm:col-span-2 lg:col-span-3"><Label>肝性脳症</Label><RadioGroup value={encephalopathy} onValueChange={(v) => setEncephalopathy(v as "none" | "mild" | "sometimes")} className="flex flex-wrap gap-x-4"><div className="flex items-center space-x-2"><RadioGroupItem value="none" id="enc-no" /><Label htmlFor="enc-no">なし</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="mild" id="enc-mild" /><Label htmlFor="enc-mild">軽度</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="sometimes" id="enc-some" /><Label htmlFor="enc-some">時々昏睡</Label></div></RadioGroup></div>
           </CardContent>
@@ -121,6 +127,7 @@ export default function Home() {
             <CardContent className="p-4 rounded-md border-2 border-red-500 text-center">
               <p className="text-lg">合計スコア: <span className="font-bold">{childPughResult && childPughResult.score}</span></p>
               <p className="text-3xl font-bold text-red-600">{childPughResult && childPughResult.class}</p>
+
             </CardContent>
           </Card>
         </div>
