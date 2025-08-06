@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -123,54 +123,73 @@ export default function Home() {
 
   }, [icgR15, totalBilirubin, albumin, pt, ascites, encephalopathy]);
 
+  const handleNumericInputChange = (setter: React.Dispatch<React.SetStateAction<string>>, value: string) => {
+    // 数字と小数点のみを許可
+    let filteredValue = value.replace(/[^0-9.]/g, '');
+    // 複数の小数点がある場合は最初のものだけを残す
+    const parts = filteredValue.split('.');
+    if (parts.length > 2) {
+      filteredValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+    setter(filteredValue);
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-4 sm:p-8 bg-slate-50">
-      <div className="w-full max-w-3xl space-y-8">
-        <div className="text-center mt-8">
-          <h1 className="text-3xl sm:text-4xl font-bold">肝切除シミュレーター</h1>
-          <p className="text-muted-foreground mt-2">各項目を入力すると、自動で計算結果が表示されます。</p>
+    <main className="flex min-h-screen flex-col items-center justify-start p-1 bg-slate-50">
+      <div className="w-full max-w-xl space-y-1">
+        <div className="text-center mt-0 mb-0">
+          <h1 className="text-xl font-bold">肝切除シミュレーター</h1>
+          <p className="text-muted-foreground text-xs">各項目を入力すると、自動で計算結果が表示されます。</p>
         </div>
 
         {/* Unified Input Card */}
         <Card>
-          <CardHeader>
-            <CardTitle>患者情報入力</CardTitle>
+          <CardHeader className="p-0.5">
+            {/* <CardTitle className="text-base">患者情報入力</CardTitle> */}
           </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="grid gap-2"><Label htmlFor="icg-r15">ICG R15値 (%)</Label><Input id="icg-r15" type="number" placeholder="例: 15" value={icgR15} onChange={(e) => setIcgR15(e.target.value)} /></div>
-            <div className="grid gap-2"><Label htmlFor="bilirubin">総ビリルビン値 (mg/dL)</Label><Input id="bilirubin" type="number" placeholder="例: 0.8" value={totalBilirubin} onChange={(e) => setTotalBilirubin(e.target.value)} /></div>
-            <div className="grid gap-2"><Label htmlFor="albumin">血清アルブミン値 (g/dL)</Label><Input id="albumin" type="number" placeholder="例: 3.5" value={albumin} onChange={(e) => setAlbumin(e.target.value)} /></div>
-            <div className="grid gap-2"><Label htmlFor="pt">PT活性値 (%)</Label><Input id="pt" type="number" placeholder="例: 90" value={pt} onChange={(e) => setPt(e.target.value)} /></div>
-            <div className="grid gap-2 sm:col-span-2 lg:col-span-3"><Label>腹水</Label><RadioGroup value={ascites} onValueChange={(v) => setAscites(v as "none" | "mild" | "moderate")} className="flex flex-wrap gap-x-4"><div className="flex items-center space-x-2"><RadioGroupItem value="none" id="asc-no" /><Label htmlFor="asc-no">なし</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="mild" id="asc-mild" /><Label htmlFor="asc-mild">軽度</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="moderate" id="asc-mod" /><Label htmlFor="asc-mod">中等度以上</Label></div></RadioGroup></div>
-            <div className="grid gap-2 sm:col-span-2 lg:col-span-3"><Label>肝性脳症</Label><RadioGroup value={encephalopathy} onValueChange={(v) => setEncephalopathy(v as "none" | "mild" | "sometimes")} className="flex flex-wrap gap-x-4"><div className="flex items-center space-x-2"><RadioGroupItem value="none" id="enc-no" /><Label htmlFor="enc-no">なし</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="mild" id="enc-mild" /><Label htmlFor="enc-mild">軽度</Label></div><div className="flex items-center space-x-2"><RadioGroupItem value="sometimes" id="enc-some" /><Label htmlFor="enc-some">時々昏睡</Label></div></RadioGroup></div>
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 p-1">
+            <div className="grid gap-0.5"><Label htmlFor="icg-r15" className="text-xs">ICG R15値 (%)</Label><Input id="icg-r15" type="number" inputMode="numeric" pattern="[0-9]*" placeholder="例: 15" value={icgR15} onChange={(e) => handleNumericInputChange(setIcgR15, e.target.value)} className="text-xs" /></div>
+            <div className="grid gap-0.5"><Label htmlFor="bilirubin" className="text-xs">総ビリルビン値 (mg/dL)</Label><Input id="bilirubin" type="number" inputMode="numeric" pattern="[0-9]*" placeholder="例: 0.8" value={totalBilirubin} onChange={(e) => handleNumericInputChange(setTotalBilirubin, e.target.value)} className="text-xs" /></div>
+            <div className="grid gap-0.5"><Label htmlFor="albumin" className="text-xs">血清アルブミン値 (g/dL)</Label><Input id="albumin" type="number" inputMode="numeric" pattern="[0-9]*" placeholder="例: 3.5" value={albumin} onChange={(e) => handleNumericInputChange(setAlbumin, e.target.value)} className="text-xs" /></div>
+            <div className="grid gap-0.5"><Label htmlFor="pt" className="text-xs">PT活性値 (%)</Label><Input id="pt" type="number" inputMode="numeric" pattern="[0-9]*" placeholder="例: 90" value={pt} onChange={(e) => handleNumericInputChange(setPt, e.target.value)} className="text-xs" /></div>
+            <div className="grid gap-0.5 sm:col-span-2 lg:col-span-3"><Label className="text-xs">腹水</Label><RadioGroup value={ascites} onValueChange={(v) => setAscites(v as "none" | "mild" | "moderate")} className="flex flex-wrap gap-x-1"><div className="flex items-center space-x-0.5"><RadioGroupItem value="none" id="asc-no" /><Label htmlFor="asc-no" className="text-xs">なし</Label></div><div className="flex items-center space-x-0.5"><RadioGroupItem value="mild" id="asc-mild" /><Label htmlFor="asc-mild" className="text-xs">軽度</Label></div><div className="flex items-center space-x-0.5"><RadioGroupItem value="moderate" id="asc-mod" /><Label htmlFor="asc-mod" className="text-xs">中等度以上</Label></div></RadioGroup></div>
+            <div className="grid gap-0.5 sm:col-span-2 lg:col-span-3"><Label className="text-xs">肝性脳症</Label><RadioGroup value={encephalopathy} onValueChange={(v) => setEncephalopathy(v as "none" | "mild" | "sometimes")} className="flex flex-wrap gap-x-1"><div className="flex items-center space-x-0.5"><RadioGroupItem value="none" id="enc-no" /><Label htmlFor="enc-no" className="text-xs">なし</Label></div><div className="flex items-center space-x-0.5"><RadioGroupItem value="mild" id="enc-mild" /><Label htmlFor="enc-mild" className="text-xs">軽度</Label></div><div className="flex items-center space-x-0.5"><RadioGroupItem value="sometimes" id="enc-some" /><Label htmlFor="enc-some" className="text-xs">時々昏睡</Label></div></RadioGroup></div>
           </CardContent>
         </Card>
 
         {/* Results Area */}
-        <div className="space-y-8">
-          <Card className={takasakiResult ? '' : 'hidden'}>
-            <CardHeader><CardTitle>高崎の式</CardTitle></CardHeader>
-            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-3 rounded-md border-2 border-blue-500"><p className="font-bold">肝硬変 (LC): <span className="text-2xl font-bold text-blue-600 float-right">{takasakiResult && (typeof takasakiResult.lc === 'number' ? `${takasakiResult.lc.toFixed(1)}%` : takasakiResult.lc)}</span></p></div>
-              <div className="p-3 rounded-md border-2 border-green-500"><p className="font-bold">正常肝 (non-LC): <span className="text-2xl font-bold text-green-600 float-right">{takasakiResult && (typeof takasakiResult.nonLc === 'number' ? `${takasakiResult.nonLc.toFixed(1)}%` : takasakiResult.nonLc)}</span></p></div>
-            </CardContent>
-          </Card>
-          <Card className={makuuchiResult ? '' : 'hidden'}>
-            <CardHeader><CardTitle>幕内基準</CardTitle></CardHeader>
-            <CardContent><div className="p-4 rounded-md border-2 border-purple-500"><p className="text-2xl font-bold text-purple-600 text-center">{makuuchiResult}</p></div></CardContent>
-          </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-1">
+          {/* Child-Pugh Score Card */}
           <Card className={childPughResult ? '' : 'hidden'}>
-            <CardHeader><CardTitle>Child-Pugh Score</CardTitle></CardHeader>
-            <CardContent className="p-4 rounded-md border-2 border-red-500 text-center">
-              <p className="text-lg">合計スコア: <span className="font-bold">{childPughResult && childPughResult.score}</span></p>
-              <p className="text-3xl font-bold text-red-600">{childPughResult && childPughResult.class}</p>
+            <CardHeader className="p-1"><CardTitle className="text-base">Child-Pugh Score</CardTitle></CardHeader>
+            <CardContent className="p-1">
+              <div className="p-0.5 rounded-md border-2 border-red-500 text-center">
+                <p className="text-xs">合計スコア: <span className="font-bold">{childPughResult && childPughResult.score}</span></p>
+                <p className="text-lg font-bold text-red-600">{childPughResult && childPughResult.class}</p>
+              </div>
             </CardContent>
           </Card>
+          {/* Liver Damage Grade Card */}
           <Card className={liverDamageResult ? '' : 'hidden'}>
-            <CardHeader><CardTitle>肝障害度</CardTitle></CardHeader>
-            <CardContent className="p-4 rounded-md border-2 border-orange-500 text-center">
-              <p className="text-3xl font-bold text-orange-600">{liverDamageResult}</p>
+            <CardHeader className="p-1"><CardTitle className="text-base">肝障害度</CardTitle></CardHeader>
+            <CardContent className="p-1">
+              <div className="p-0.5 rounded-md border-2 border-orange-500 text-center">
+                <p className="text-lg font-bold text-orange-600">{liverDamageResult}</p>
+              </div>
             </CardContent>
+          </Card>
+          {/* 高崎の式 Card */}
+          <Card className={takasakiResult ? '' : 'hidden'}>
+            <CardHeader className="p-1"><CardTitle className="text-base">高崎の式</CardTitle></CardHeader>
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-0.5 p-1">
+              <div className="p-0.5 rounded-md border-2 border-green-500"><p className="font-bold text-xs">正常肝 (non-LC): <span className="text-base font-bold text-green-600 float-right">{takasakiResult && (typeof takasakiResult.nonLc === 'number' ? `${takasakiResult.nonLc.toFixed(1)}%` : takasakiResult.nonLc)}</span></p></div>
+              <div className="p-0.5 rounded-md border-2 border-blue-500"><p className="font-bold text-xs">肝硬変 (LC): <span className="text-base font-bold text-blue-600 float-right">{takasakiResult && (typeof takasakiResult.lc === 'number' ? `${takasakiResult.lc.toFixed(1)}%` : takasakiResult.lc)}</span></p></div>
+            </CardContent>
+          </Card>
+          {/* 幕内基準 Card */}
+          <Card className={makuuchiResult ? '' : 'hidden'}>
+            <CardHeader className="p-1"><CardTitle className="text-base">幕内基準</CardTitle></CardHeader>
+            <CardContent className="p-1"><div className="p-0.5 rounded-md border-2 border-purple-500"><p className="text-base font-bold text-purple-600 text-center">{makuuchiResult}</p></div></CardContent>
           </Card>
         </div>
 
